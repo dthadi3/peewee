@@ -1,4 +1,7 @@
 language: python
+arch:
+  - AMD64
+  - ppc64le
 python:
   - 2.7
   - 3.4
@@ -40,6 +43,43 @@ matrix:
         - wget -qO- https://binaries.cockroachdb.com/cockroach-v20.1.1.linux-amd64.tgz | tar xvz
         - ./cockroach-v20.1.1.linux-amd64/cockroach start --insecure --background
         - ./cockroach-v20.1.1.linux-amd64/cockroach sql --insecure -e 'create database peewee_test;'
+#Added power jobs
+    - python: 3.7
+      arch: ppc64le
+      dist: xenial
+      env: PEEWEE_TEST_BACKEND=sqlite
+    - python: 3.7
+      arch: ppc64le
+      dist: xenial
+      env: PEEWEE_TEST_BACKEND=postgresql
+    - python: 3.7
+      arch: ppc64le
+      dist: xenial
+      env: PEEWEE_TEST_BACKEND=mysql
+    - python: 3.8
+      arch: ppc64le
+      dist: xenial
+    - python: 3.7
+      arch: ppc64le
+      dist: xenial
+      env:
+      - PEEWEE_TEST_BUILD_SQLITE=1
+      - PEEWEE_CLOSURE_EXTENSION=/usr/local/lib/closure.so
+      - LSM_EXTENSION=/usr/local/lib/lsm.so
+      before_install:
+        - sudo apt-get install -y tcl-dev
+        - ./.travis_deps.sh
+        - sudo ldconfig
+      script: "python runtests.py -v2"
+    - python: 3.7
+      arch: ppc64le
+      dist: xenial
+      env:
+      - PEEWEE_TEST_BACKEND=cockroachdb
+      before_install:
+        - wget -qO- https://binaries.cockroachdb.com/cockroach-v20.1.1.linux-amd64.tgz | tar xvz
+        - ./cockroach-v20.1.1.linux-amd64/cockroach start --insecure --background
+        - ./cockroach-v20.1.1.linux-amd64/cockroach sql --insecure -e 'create database peewee_test;' 
   allow_failures:
 addons:
   postgresql: "9.6"
