@@ -93,6 +93,10 @@ before_script:
   - psql -c 'drop database if exists peewee_test;' -U postgres
   - psql -c 'create database peewee_test;' -U postgres
   - psql peewee_test -c 'create extension hstore;' -U postgres
+  - |
+   if [[ "$TRAVIS_CPU_ARCH" == "ppc64le" ]]; then 
+      sudo chmod -R 755 /var/run/mysqld/
+   fi
   - mysql -e 'drop user if exists travis@localhost;'
   - mysql -e 'create user travis@localhost;'
   - mysql -e 'drop database if exists peewee_test;'
